@@ -9,4 +9,6 @@ public interface AuthorizationService {
 	public boolean isUserAuthenticated(GoogleAuthorizationCodeFlow flow) throws IOException;
 
 	public String authenticateUserViaGoogle(GoogleAuthorizationCodeFlow flow) throws IOException;
+
+	public void exchangeCodeForTokens(GoogleAuthorizationCodeFlow flow, String code) throws IOException;
 }

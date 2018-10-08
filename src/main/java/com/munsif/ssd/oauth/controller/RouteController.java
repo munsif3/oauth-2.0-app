@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,4 +64,19 @@ public class RouteController {
 		response.sendRedirect(authorizationService.authenticateUserViaGoogle(flow));
 	}
 
+	@GetMapping("/oauth/callback")
+	public String saveAuthorizationCode(HttpServletRequest request) throws IOException {
+		String code = request.getParameter("code");
+		if (code != null) {
+			authorizationService.exchangeCodeForTokens(flow, code);
+			return "home.html";
+		}
+		return "index.html";
+	}
+
+	@GetMapping("/logout")
+	public String logout() {
+		// authorizationService.removeUserSession();
+		return "index.html";
+	}
 }

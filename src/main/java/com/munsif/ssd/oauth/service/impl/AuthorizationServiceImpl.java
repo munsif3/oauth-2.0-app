@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.munsif.ssd.oauth.service.AuthorizationService;
 import com.munsif.ssd.oauth.util.ApplicationConfig;
 
@@ -41,6 +42,13 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 		String redirectUrl = url.setRedirectUri(config.getCALLBACK_URI()).setAccessType("offline").build();
 		logger.debug("redirectUrl, " + redirectUrl);
 		return redirectUrl;
+	}
+
+	@Override
+	public void exchangeCodeForTokens(GoogleAuthorizationCodeFlow flow, String code) throws IOException {
+		//exchange the code against the access token and refresh token
+		GoogleTokenResponse tokenResponse = flow.newTokenRequest(code).setRedirectUri(config.getCALLBACK_URI()).execute();
+		flow.createAndStoreCredential(tokenResponse, USER_IDENTIFIER_KEY);		
 	}
 
 }
