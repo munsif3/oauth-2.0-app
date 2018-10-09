@@ -29,4 +29,4 @@ StoredCredential
 /bin/
 
 */tempfolder/*
-*/src/main/resources/tempfolder/*
+/src/main/resources/tempfolder/*
