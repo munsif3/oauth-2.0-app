@@ -60,7 +60,7 @@ function uploadNext() {
 	xhr.upload.addEventListener("progress", onUploadProgress, false);
 	xhr.addEventListener("load", onUploadComplete, false);
 	xhr.addEventListener("error", onUploadFailed, false);
-	xhr.open("POST", "upload");
+	xhr.open("POST", "/upload");
 	xhr.send(fd);
 }
 

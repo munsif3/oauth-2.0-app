@@ -24,8 +24,8 @@ public class ApplicationConfig {
 		return CALLBACK_URI;
 	}
 
-	public void setCALLBACK_URI(String cALLBACK_URI) {
-		CALLBACK_URI = cALLBACK_URI;
+	public void setCALLBACK_URI(String CALLBACK_URI_p) {
+		CALLBACK_URI = CALLBACK_URI_p;
 	}
 
 	public Resource getDriveSecretKeys() {
