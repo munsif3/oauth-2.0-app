@@ -70,7 +70,7 @@ public class MainController {
 	 * @param response
 	 * @throws Exception
 	 */
-	@GetMapping("/signin/google")
+	@GetMapping("/googlesignin")
 	public void doGoogleSignIn(HttpServletResponse response) throws Exception {
 		logger.debug("SSO Called...");
 		response.sendRedirect(authorizationService.authenticateUserViaGoogle());

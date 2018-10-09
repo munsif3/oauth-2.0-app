@@ -28,4 +28,5 @@ gsuite_drive_keys.json
 StoredCredential
 /bin/
 
-/tempfolder/
+*/tempfolder/*
+*/src/main/resources/tempfolder/*

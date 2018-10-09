@@ -1,8 +1,5 @@
 package com.munsif.ssd.oauth.service.impl;
 
-import java.nio.file.Path;
-import java.util.Collections;
-
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
