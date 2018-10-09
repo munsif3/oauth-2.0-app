@@ -1,8 +1,7 @@
 package com.munsif.ssd.oauth.service.impl;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collections;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -16,12 +15,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
-import com.google.api.services.drive.DriveScopes;
+import com.munsif.ssd.oauth.constant.ApplicationConstant;
 import com.munsif.ssd.oauth.service.AuthorizationService;
 import com.munsif.ssd.oauth.util.ApplicationConfig;
 
@@ -29,13 +24,6 @@ import com.munsif.ssd.oauth.util.ApplicationConfig;
 public class AuthorizationServiceImpl implements AuthorizationService {
 
 	private Logger logger = LoggerFactory.getLogger(AuthorizationServiceImpl.class);
-
-	private static HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-	private static JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-
-	private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
-	private static final String USER_IDENTIFIER_KEY = "MY_TEST_USER";
-
 	private GoogleAuthorizationCodeFlow flow;
 
 	@Autowired
@@ -46,20 +34,25 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 		InputStreamReader reader = new InputStreamReader(config.getDriveSecretKeys().getInputStream());
 		FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(config.getCredentialsFolder().getFile());
 
-		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, reader);
-		flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES).setDataStoreFactory(dataStoreFactory)
-				.build();
+		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(ApplicationConstant.JSON_FACTORY, reader);
+		flow = new GoogleAuthorizationCodeFlow.Builder(ApplicationConstant.HTTP_TRANSPORT, ApplicationConstant.JSON_FACTORY, clientSecrets,
+				ApplicationConstant.SCOPES).setDataStoreFactory(dataStoreFactory).build();
 	}
 
 	@Override
 	public boolean isUserAuthenticated() throws Exception {
-		Credential credential = flow.loadCredential(USER_IDENTIFIER_KEY);
+		Credential credential = getCredentials();
 		if (credential != null) {
 			boolean isTokenValid = credential.refreshToken();
 			logger.debug("isTokenValid, " + isTokenValid);
 			return isTokenValid;
 		}
 		return false;
+	}
+
+	@Override
+	public Credential getCredentials() throws IOException {
+		return flow.loadCredential(ApplicationConstant.USER_IDENTIFIER_KEY);
 	}
 
 	@Override
@@ -74,7 +67,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	public void exchangeCodeForTokens(String code) throws Exception {
 		// exchange the code against the access token and refresh token
 		GoogleTokenResponse tokenResponse = flow.newTokenRequest(code).setRedirectUri(config.getCALLBACK_URI()).execute();
-		flow.createAndStoreCredential(tokenResponse, USER_IDENTIFIER_KEY);
+		flow.createAndStoreCredential(tokenResponse, ApplicationConstant.USER_IDENTIFIER_KEY);
 	}
 
 }

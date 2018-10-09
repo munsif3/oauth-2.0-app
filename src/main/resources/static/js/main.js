@@ -17,21 +17,18 @@ function onUploadComplete(e) {
 // Will be called when user select the files
 function onFileSelect(e) {
 	files = e.target.files; // FileList object
-	if (validateFileFormat(files)){
-		var output = [];
-		fileCount = files.length;
-		selectedFileCount = 0;
-		for (var i = 0; i < fileCount; i++) {
-			var file = files[i];
-			output.push(file.name, ' (', file.size, ' bytes, ', file.lastModifiedDate.toLocaleDateString(), ')');
-			output.push('<br/>');
-			selectedFileCount += file.size;
-		}
-		document.getElementById('selectedFiles').innerHTML = output.join('');
-	} else {
-		swal("Cannot Load!", "Please select only Image file(s) to upload", "warning");
-		resetScreen();
+	var output = [];
+	fileCount = files.length;
+	selectedFileCount = 0;
+	for (var i = 0; i < fileCount; i++) {
+		var file = files[i];
+		output.push(file.name, ' (', file.size, ' bytes, ', file.lastModifiedDate
+				.toLocaleDateString(), ')');
+		output.push('<br/>');
+		selectedFileCount += file.size;
 	}
+	document.getElementById('selectedFiles').innerHTML = output.join('');
+
 }
 
 // Update the progress bar
@@ -66,7 +63,7 @@ function uploadNext() {
 
 // Start the process
 function startUpload() {
-	if(document.getElementById('files').files.length <= 0){
+	if (document.getElementById('files').files.length <= 0) {
 		swal("Cannot Upload!", "Please select file(s) to upload", "warning");
 	} else {
 		totalUploadedValue = filesUploaded = 0;
@@ -87,18 +84,4 @@ window.onload = function() {
 	document.getElementById('files').addEventListener('change', onFileSelect, false);
 	document.getElementById('uploadButton').addEventListener('click', startUpload, false);
 	document.getElementById('resetButton').addEventListener('click', resetScreen, false);
-}
-
-function validateFileFormat(files){
-	var flag = true;
-	for (let i = 0; i < files.length; i++){
-		var fileInput = files[i];
-		var fileType = fileInput.name;
-		var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif|\.bmp|\.tiff)$/i;
-	    if(!allowedExtensions.exec(fileType)){
-	    	flag = false;
-	    	break;
-	    }
-	}
-	return flag;
 }
