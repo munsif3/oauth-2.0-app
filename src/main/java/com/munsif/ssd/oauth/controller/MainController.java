@@ -101,11 +101,12 @@ public class MainController {
 	 * Handles logout
 	 * 
 	 * @return
+	 * @throws Exception 
 	 */
 	@GetMapping("/logout")
-	public String logout() {
+	public String logout(HttpServletRequest request) throws Exception {
 		logger.debug("Logout invoked...");
-		// authorizationService.removeUserSession();
+		authorizationService.removeUserSession(request);
 		return "redirect:/login";
 	}
 

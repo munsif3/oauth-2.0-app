@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
 	private Logger logger = LoggerFactory.getLogger(AuthorizationServiceImpl.class);
 	private GoogleAuthorizationCodeFlow flow;
+	private FileDataStoreFactory dataStoreFactory;
 
 	@Autowired
 	private ApplicationConfig config;
@@ -32,7 +35,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	@PostConstruct
 	public void init() throws Exception {
 		InputStreamReader reader = new InputStreamReader(config.getDriveSecretKeys().getInputStream());
-		FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(config.getCredentialsFolder().getFile());
+		dataStoreFactory = new FileDataStoreFactory(config.getCredentialsFolder().getFile());
 
 		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(ApplicationConstant.JSON_FACTORY, reader);
 		flow = new GoogleAuthorizationCodeFlow.Builder(ApplicationConstant.HTTP_TRANSPORT, ApplicationConstant.JSON_FACTORY, clientSecrets,
@@ -68,6 +71,18 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 		// exchange the code against the access token and refresh token
 		GoogleTokenResponse tokenResponse = flow.newTokenRequest(code).setRedirectUri(config.getCALLBACK_URI()).execute();
 		flow.createAndStoreCredential(tokenResponse, ApplicationConstant.USER_IDENTIFIER_KEY);
+	}
+
+	@Override
+	public void removeUserSession(HttpServletRequest request) throws Exception {
+//		HttpSession session = request.getSession(false);
+//        session = request.getSession(true);
+//        if (session != null) {
+//            session.invalidate();
+//            logger.info("Logged Out...");
+//        }
+		// revoke token and clear the local storage
+		dataStoreFactory.getDataStore(config.getCredentialsFolder().getFilename()).clear();
 	}
 
 }
